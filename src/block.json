@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "hsntareq/am-miusage-api",
+	"version": "0.1.0",
+	"title": "AM API Data",
+	"category": "widgets",
+	"icon": "smiley",
+	"description": "This plugin is to create a block for the Miusage API data to display on the front end and manage the data from the back end. Api url: https://miusage.com/v1/challenge/1",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "amapi",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}

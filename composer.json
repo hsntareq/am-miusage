@@ -1,0 +1,27 @@
+{
+	"name": "hsntareq/muisaseapi",
+	"description": "AM Muisase API data collector and provider.",
+	"keywords": [
+		"WordPress",
+		"Plugin"
+	],
+	"license": "GPL-3.0",
+	"version": "1.0.0",
+	"authors": [
+		{
+			"name": "Hasan Tareq",
+			"email": "hsntareq@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Miusase\\": "./inc"
+		},
+		"files": [
+			"./inc/spl-autoload.php"
+		]
+	},
+	"require": {
+		"wp-cli/wp-cli": "^2.9"
+	}
+}

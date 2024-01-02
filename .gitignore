@@ -1,0 +1,27 @@
+# ignore node dependency directories
+node_modules/
+
+# ignore generated css and js
+build
+assets/css/*
+!assets/css/*.css
+assets/js/*
+!assets/js/*.js
+
+# ignore .DS_Store, .ds_store
+.DS_Store
+.ds_store
+mix-manifest.json
+# ignore vendor
+vendor
+build
+
+# ignore log files and databases
+*-lock.json
+*.log
+*.lock
+*.sql
+*.sqlite
+*.zip
+*.rar
+wp-mail-smtp/
