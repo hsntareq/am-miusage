@@ -27,9 +27,6 @@ if ( file_exists( AMAPI_PLUGIN_FILE . 'vendor/autoload.php' ) ) {
 	require_once AMAPI_PLUGIN_FILE . 'vendor/autoload.php';
 }
 
-if ( file_exists( AMAPI_PLUGIN_FILE . 'inc/class-autoload.php' ) ) {
-	require_once AMAPI_PLUGIN_FILE . 'inc/class-autoload.php';
-}
 if ( ! function_exists( 'amapi_table_page_content' ) ) {
 	function amapi_table_page_content() {
 		if ( file_exists( AMAPI_PLUGIN_FILE . 'awsome-table.php' ) ) {
@@ -66,6 +63,7 @@ if ( ! function_exists( 'amapi_delete_db_table' ) ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'am_miusage_api';
 		$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		wp_clear_scheduled_hook('amapi_cron_hook');
 	}
 }
 register_deactivation_hook( __FILE__, 'amapi_delete_db_table' );
@@ -109,10 +107,6 @@ if ( ! function_exists( 'load_amapi_data_table' ) ) {
 	}
 }
 
-if ( file_exists( AMAPI_PLUGIN_FILE . 'inc/class-custom-list.php' ) ) {
-	require_once AMAPI_PLUGIN_FILE . 'inc/class-custom-list.php';
-}
-
 function amapi_cron_job() {
 	( new Miusase\Class_Ajax_Request() )->load_amapi_data();
 }
@@ -124,12 +118,3 @@ function plugin_activation() {
 	}
 }
 add_action( 'init', 'plugin_activation' );
-
-function plugin_deactivation() {
-	wp_clear_scheduled_hook('amapi_cron_hook');
-	if ( get_transient( 'amapi_data_loaded' ) ) {
-		delete_transient( 'amapi_data_loaded' );
-	}
-}
-register_deactivation_hook( __FILE__, 'plugin_deactivation' );
-

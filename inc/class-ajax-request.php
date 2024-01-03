@@ -52,7 +52,7 @@ class Class_Ajax_Request {
 			$this->amapi_reschedule_cron();
 		}
 
-		wp_send_json( $response_body );
+		wp_send_json_success( $response_body );
 	}
 
 	public function amapi_reschedule_cron() {

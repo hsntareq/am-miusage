@@ -17,12 +17,30 @@ const ajax_request = (action, data = null) => {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
+	var table = document.querySelector('.wp-list-table');
+	var loader = document.querySelector('.loader');
+	// console.log(table.querySelector('tbody tr.no-items'));
+	loader.style.display = 'block';
+
+	if (table && table.querySelector('tbody tr.no-items') !== null) {
+		ajax_request('load_amapi_data')
+			.then(() => location.reload())
+
+	} else {
+		if (loader) {
+			loader.style.display = 'none';
+		}
+	}
+
+
 	var element = document.getElementById("refresh_button");
 	element && element.addEventListener("click", function () {
+		loader.style.display = 'block';
 		ajax_request('load_amapi_data')
 			.then(response => {
-				console.log(response);
-				location.reload();
+				if (response.success === true) {
+					location.reload();
+				}
 			})
 			.catch(error => {
 				console.error(error);
