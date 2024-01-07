@@ -15,5 +15,23 @@
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js"
+	"viewScript": "file:./view.js",
+	"attributes": {
+		"apiUrl": {
+			"type": "string",
+			"default": "https://miusage.com/v1/challenge/1"
+		},
+		"apiData": {
+			"type": "array",
+			"default": []
+		},
+		"apiDataError": {
+			"type": "string",
+			"default": ""
+		},
+		"apiDataLoading": {
+			"type": "boolean",
+			"default": false
+		}
+	}
 }
