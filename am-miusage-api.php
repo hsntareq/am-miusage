@@ -63,7 +63,7 @@ if ( ! function_exists( 'amapi_delete_db_table' ) ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'am_miusage_api';
 		$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
-		wp_clear_scheduled_hook('amapi_cron_hook');
+		wp_clear_scheduled_hook( 'amapi_cron_hook' );
 	}
 }
 register_deactivation_hook( __FILE__, 'amapi_delete_db_table' );
@@ -106,15 +106,30 @@ if ( ! function_exists( 'load_amapi_data_table' ) ) {
 		$table->display();
 	}
 }
-
-function amapi_cron_job() {
-	( new Miusase\Class_Ajax_Request() )->load_amapi_data();
-}
-add_action( 'amapi_cron_hook', 'amapi_cron_job' );
-
-function plugin_activation() {
-	if ( ! wp_next_scheduled( 'amapi_cron_hook' ) ) {
-		wp_schedule_event( time(), 'every_minute', 'amapi_cron_hook' );
+if ( ! function_exists( 'amapi_custom_cron_schedule' ) ) {
+	function amapi_custom_cron_schedule( $schedules ) {
+		if ( ! isset( $schedules['every_minute'] ) ) {
+			$schedules['every_minute'] = array(
+				'interval' => 60,
+				'display'  => __( 'Every Minute' )
+			);
+		}
+		return $schedules;
 	}
+	add_action( 'cron_schedules', 'cron_custom_schedule' );
 }
-add_action( 'init', 'plugin_activation' );
+
+if ( ! function_exists( 'amapi_cron_job' ) ) {
+	function amapi_cron_job() {
+		( new Miusase\Class_Ajax_Request() )->load_amapi_data();
+	}
+	add_action( 'amapi_cron_hook', 'amapi_cron_job' );
+}
+if ( ! function_exists( 'plugin_activation' ) ) {
+	function plugin_activation() {
+		if ( ! wp_next_scheduled( 'amapi_cron_hook' ) ) {
+			wp_schedule_event( time(), 'every_minute', 'amapi_cron_hook' );
+		}
+	}
+	add_action( 'init', 'plugin_activation' );
+}
