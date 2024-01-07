@@ -116,7 +116,7 @@ if ( ! function_exists( 'amapi_custom_cron_schedule' ) ) {
 		}
 		return $schedules;
 	}
-	add_action( 'cron_schedules', 'cron_custom_schedule' );
+	add_action( 'cron_schedules', 'amapi_custom_cron_schedule' );
 }
 
 if ( ! function_exists( 'amapi_cron_job' ) ) {
