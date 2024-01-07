@@ -59,6 +59,6 @@ class Class_Ajax_Request {
 		if ( wp_next_scheduled( 'amapi_cron_hook' ) ) {
 			wp_clear_scheduled_hook('amapi_cron_hook');
 		}
-		wp_schedule_event( time(), 'every_minute', 'amapi_cron_hook' );
+		wp_schedule_event( time(), 'every_five_minutes', 'amapi_cron_hook' );
 	}
 }

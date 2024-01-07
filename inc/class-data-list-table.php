@@ -2,7 +2,7 @@
 namespace Miusase;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
-    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
 class Class_Data_List_Table extends \WP_List_Table {
@@ -55,7 +55,7 @@ class Class_Data_List_Table extends \WP_List_Table {
 		$this->_column_headers = [ $columns, $hidden, $sortable ];
 		$per_page              = 10;
 		$current_page          = $this->get_pagenum();
-		$total_items           = amapi_data_count();
+		$total_items           = $this->amapi_data_count();
 		$offset                = ( $current_page - 1 ) * $per_page;
 		$this->set_pagination_args( [
 			'total_items' => $total_items,
@@ -70,6 +70,31 @@ class Class_Data_List_Table extends \WP_List_Table {
 			$args['orderby'] = $_REQUEST['orderby'];
 			$args['order']   = $_REQUEST['order'];
 		}
-		$this->items = amapi_get_all_data( $args );
+		$this->items = $this->amapi_get_all_data( $args );
+	}
+
+	public function amapi_get_all_data( $args = [] ) {
+		global $wpdb;
+		$defaults = [
+			'number'  => 20,
+			'offset'  => 0,
+			'orderby' => 'id',
+			'order'   => 'ASC',
+		];
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$items = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}am_miusage_api ORDER BY {$args['orderby']} {$args['order']} LIMIT %d, %d",
+				$args['offset'], $args['number']
+			)
+		);
+		return $items;
+	}
+
+	public function amapi_data_count() {
+		global $wpdb;
+		return (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}am_miusage_api" );
 	}
 }

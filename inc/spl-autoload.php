@@ -10,7 +10,7 @@ if ( ! function_exists( 'initialize_autoloader' ) ) {
 	 */
 	function initialize_autoloader( $directory, $namespace ) {
 		$excludedFiles = array(
-			'general.php',
+			'general-functions.php',
 			'spl-autoload.php',
 			'class-data-list-table.php',
 		);
