@@ -19,7 +19,7 @@ class Force_Refresh_Data extends \WP_CLI_Command {
 	 * @param array $assoc_args Command associative arguments.
 	 */
 	public function execute( $args, $assoc_args ) {
-		( new Miusase\Class_Ajax_Request() )->load_amapi_data();
+		( new Miusase\Class_Ajax_Request() )->load_amapi_data_wp_cli();
 		WP_CLI::success( 'Data Refreshed Forcefully!' );
 	}
 }

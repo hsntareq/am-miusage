@@ -24,8 +24,8 @@ class Register_Blocks {
 	}
 
 	public function amapi_table_page_content() {
-		if ( file_exists( AMAPI_PLUGIN_FILE . 'awsome-table.php' ) ) {
-			require_once AMAPI_PLUGIN_FILE . 'awsome-table.php';
+		if ( file_exists( AMAPI_PLUGIN_FILE . 'views/awsome-table.php' ) ) {
+			require_once AMAPI_PLUGIN_FILE . 'views/awsome-table.php';
 		} else {
 			die( 'Some how your plugin table file is deleted or name changed. please install this plugin again' );
 		}

@@ -1,12 +1,23 @@
 <?php
 namespace Miusase;
 
+if ( ! class_exists( 'WP_CLI_Command' ) ) {
+	// Include the necessary WP-CLI files
+	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli.php';
+	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli-command.php';
+}
+
+
 class Class_Ajax_Request {
 	public function __construct() {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
 		add_action( 'wp_ajax_nopriv_load_amapi_data', [ $this, 'load_amapi_data' ] );
 	}
 	public function load_amapi_data() {
+		WP_CLI::runcommand( 'wp refresh_forcefully' );
+	}
+
+	public function load_amapi_data_wp_cli() {
 		$request_args = array(
 			'headers' => array(
 				'Content-Type' => 'application/json'
@@ -48,7 +59,7 @@ class Class_Ajax_Request {
 			}
 		}
 
-		if ((defined('DOING_AJAX') && DOING_AJAX) || (defined('WP_CLI') && WP_CLI) && wp_next_scheduled('amapi_cron_hook')) {
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'WP_CLI' ) && WP_CLI ) && wp_next_scheduled( 'amapi_cron_hook' ) ) {
 			$this->amapi_reschedule_cron();
 		}
 
@@ -57,7 +68,7 @@ class Class_Ajax_Request {
 
 	public function amapi_reschedule_cron() {
 		if ( wp_next_scheduled( 'amapi_cron_hook' ) ) {
-			wp_clear_scheduled_hook('amapi_cron_hook');
+			wp_clear_scheduled_hook( 'amapi_cron_hook' );
 		}
 		wp_schedule_event( time(), 'every_five_minutes', 'amapi_cron_hook' );
 	}
