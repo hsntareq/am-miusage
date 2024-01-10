@@ -55,7 +55,7 @@ export default function Edit({ attributes, setAttributes }) {
 			.catch(error => {
 				console.error('Error parsing JSON:', error);
 			});
-	}, []); 
+	}, []);
 
 	const handleToggleChange = (column) => {
 		setAttributes({ [column]: !attributes[column] });
@@ -115,18 +115,20 @@ export default function Edit({ attributes, setAttributes }) {
 				</PanelBody>
 			</InspectorControls>
 
-			<table className="am-apidata-table">
-				<thead>
-					<tr>
-						{showIdColumn && <th>ID</th>}
-						{showFirstNameColumn && <th>First Name</th>}
-						{showLastNameColumn && <th>Last Name</th>}
-						{showEmailColumn && <th>Email</th>}
-						{showDateColumn && <th>Date</th>}
-					</tr>
-				</thead>
-				<tbody>{renderTableRows()}</tbody>
-			</table>
+			<div className="am-apidata-table">
+				<table >
+					<thead>
+						<tr>
+							{showIdColumn && <th>ID</th>}
+							{showFirstNameColumn && <th>First Name</th>}
+							{showLastNameColumn && <th>Last Name</th>}
+							{showEmailColumn && <th>Email</th>}
+							{showDateColumn && <th>Date</th>}
+						</tr>
+					</thead>
+					<tbody>{renderTableRows()}</tbody>
+				</table>
+			</div>
 		</div>
 	);
 }

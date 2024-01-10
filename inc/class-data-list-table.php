@@ -1,4 +1,11 @@
 <?php
+/**
+ * Data List Table
+ *
+ * @package Miusage
+ * @since   1.0.0
+ */
+
 namespace Miusase;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -8,8 +15,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Class_Data_List_Table extends \WP_List_Table {
 	public function __construct() {
 		parent::__construct( [
-			'singular' => __( 'Data', 'amapi' ),
-			'plural'   => __( 'Datas', 'amapi' ),
+			'singular' => esc_html__( 'Data', 'amapi' ),
+			'plural'   => esc_html__( 'Datas', 'amapi' ),
 			'ajax'     => false,
 			'screen'   => 'amapi-table-page'
 		] );
@@ -18,13 +25,14 @@ class Class_Data_List_Table extends \WP_List_Table {
 	public function get_columns() {
 		return [
 			'cb'         => '<input type="checkbox" />',
-			'id'         => __( 'ID', 'amapi' ),
-			'first_name' => __( 'First Name', 'amapi' ),
-			'last_name'  => __( 'Last Name', 'amapi' ),
-			'email'      => __( 'Email', 'amapi' ),
-			'date'       => __( 'Date', 'amapi' ),
+			'id'         => esc_html__( 'ID', 'amapi' ),
+			'first_name' => esc_html__( 'First Name', 'amapi' ),
+			'last_name'  => esc_html__( 'Last Name', 'amapi' ),
+			'email'      => esc_html__( 'Email', 'amapi' ),
+			'date'       => esc_html__( 'Date', 'amapi' ),
 		];
 	}
+
 	public function get_sortable_columns() {
 		return [
 			'id'         => [ 'ID', true ],
@@ -34,20 +42,26 @@ class Class_Data_List_Table extends \WP_List_Table {
 			'date'       => [ 'date', true ],
 		];
 	}
+
 	protected function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
 			case 'value':
-				# code...
-				break;
+				// Sanitize and escape as needed
+				$value = sanitize_text_field( $item->$column_name );
+				return esc_html( $value );
 			default:
-				return isset( $item->$column_name ) ? $item->$column_name : '';
+				// Escape HTML output
+				return isset( $item->$column_name ) ? esc_html( $item->$column_name ) : '';
 		}
 	}
+
 	protected function column_cb( $item ) {
+		// Escape attribute value
 		return sprintf(
-			'<input type="checkbox" name="data_id[]" value="%s" />', $item->id
+			'<input type="checkbox" name="data_id[]" value="%s" />', esc_attr( $item->id )
 		);
 	}
+
 	public function prepare_items() {
 		$columns               = $this->get_columns();
 		$hidden                = [];
@@ -67,30 +81,10 @@ class Class_Data_List_Table extends \WP_List_Table {
 			'offset' => $offset,
 		];
 		if ( isset( $_REQUEST['orderby'] ) && isset( $_REQUEST['order'] ) ) {
-			$args['orderby'] = $_REQUEST['orderby'];
-			$args['order']   = $_REQUEST['order'];
+			$args['orderby'] = sanitize_text_field( $_REQUEST['orderby'] );
+			$args['order']   = sanitize_text_field( $_REQUEST['order'] );
 		}
-		$this->items = $this->amapi_get_all_data( $args );
-	}
-
-	public function amapi_get_all_data( $args = [] ) {
-		global $wpdb;
-		$defaults = [
-			'number'  => 20,
-			'offset'  => 0,
-			'orderby' => 'id',
-			'order'   => 'ASC',
-		];
-
-		$args = wp_parse_args( $args, $defaults );
-
-		$items = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}am_miusage_api ORDER BY {$args['orderby']} {$args['order']} LIMIT %d, %d",
-				$args['offset'], $args['number']
-			)
-		);
-		return $items;
+		$this->items = amapi_get_all_data( $args );
 	}
 
 	public function amapi_data_count() {

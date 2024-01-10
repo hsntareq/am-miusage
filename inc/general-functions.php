@@ -6,66 +6,82 @@
  */
 
 
-// Add your block in your theme or plugin functions.php file
-// function my_dynamic_block_init() {
-// 	register_block_type( 'hsntareq/am-miusage-api', array(
-// 		'render_callback' => 'my_dynamic_block_render',
-// 	) );
-// }
-
-// add_action( 'init', 'my_dynamic_block_init' );
-
-// Your render callback function
-function amapi_data_block_render( $attributes, $content ) {
-	// Fetch and process dynamic data
-	$dynamic_data = my_fetch_dynamic_data();
-
-	// Generate the HTML for your block
-	$html = '<div class="am-apidata-table">';
-	$html .= '<table>';
-	$html .= '<thead><tr>';
-
-	// Add table headers based on attributes
+// Function to generate the dynamic table
+function generate_dynamic_table( $attributes, $table_data ) {
+	$html = '<table class="' . $attributes['className'] . '">';
+	$html .= '<thead>';
+	$html .= '<tr>';
 	if ( $attributes['showIdColumn'] ) {
 		$html .= '<th>ID</th>';
 	}
-	// Add other headers based on other attributes
-
-	$html .= '</tr></thead>';
+	if ( $attributes['showFirstNameColumn'] ) {
+		$html .= '<th>First Name</th>';
+	}
+	if ( $attributes['showLastNameColumn'] ) {
+		$html .= '<th>Last Name</th>';
+	}
+	if ( $attributes['showEmailColumn'] ) {
+		$html .= '<th>Email</th>';
+	}
+	if ( $attributes['showDateColumn'] ) {
+		$html .= '<th>Date</th>';
+	}
+	$html .= '</tr>';
+	$html .= '</thead>';
 	$html .= '<tbody>';
-
-	// Add table rows based on dynamic data and attributes
-	foreach ( $dynamic_data as $dataItem ) {
+	foreach ( $table_data as $row ) {
 		$html .= '<tr>';
-
 		if ( $attributes['showIdColumn'] ) {
-			$html .= '<td>' . esc_html( $dataItem['id'] ) . '</td>';
+			$html .= '<td>' . $row->id . '</td>';
 		}
-		// Add other cells based on other attributes
-
+		if ( $attributes['showFirstNameColumn'] ) {
+			$html .= '<td>' . $row->first_name . '</td>';
+		}
+		if ( $attributes['showLastNameColumn'] ) {
+			$html .= '<td>' . $row->last_name . '</td>';
+		}
+		if ( $attributes['showEmailColumn'] ) {
+			$html .= '<td>' . $row->email . '</td>';
+		}
+		if ( $attributes['showDateColumn'] ) {
+			$html .= '<td>' . $row->date . '</td>';
+		}
 		$html .= '</tr>';
 	}
+	$html .= '</tbody>';
+	$html .= '</table>';
+	return $html;
+}
 
-	$html .= '</tbody></table>';
+// Your render callback function
+function amapi_data_block_render( $attributes, $content ) {
+	// Generate the HTML for your block
+	$html = '<div class="am-apidata-table">';
+	$html .= generate_dynamic_table( $attributes, amapi_get_all_data() );
 	$html .= '</div>';
 
 	return $html;
 }
 
-// Function to fetch dynamic data
-function my_fetch_dynamic_data() {
-	// Your code to fetch dynamic data from the API or database
-	// For example:
-	// $data = get_data_from_api();
-	$data = array(
-		array( 'id' => 1, 'name' => 'John Doe' ),
-		array( 'id' => 2, 'name' => 'Jane Doe' ),
+function amapi_get_all_data( $args = [] ) {
+	global $wpdb;
+	$defaults = [
+		'number'  => 20,
+		'offset'  => 0,
+		'orderby' => 'id',
+		'order'   => 'ASC',
+	];
+
+	$args = wp_parse_args( $args, $defaults );
+
+	$items = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT * FROM {$wpdb->prefix}am_miusage_api ORDER BY {$args['orderby']} {$args['order']} LIMIT %d, %d",
+			$args['offset'], $args['number']
+		)
 	);
-
-	return $data;
+	return $items;
 }
-
-
 
 if ( ! function_exists( 'load_amapi_data_table' ) ) {
 	function load_amapi_data_table() {
