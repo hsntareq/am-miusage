@@ -9,7 +9,9 @@ class Register_Blocks {
 	}
 
 	public function register_block() {
-		register_block_type( AMAPI_PLUGIN_FILE . '/build' );
+		register_block_type( AMAPI_PLUGIN_FILE . '/build', array(
+			'render_callback' => 'amapi_data_block_render',
+		) );
 	}
 	public function amapi_add_table_page() {
 		add_menu_page(

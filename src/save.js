@@ -15,10 +15,47 @@ import { useBlockProps } from '@wordpress/block-editor';
  *
  * @return {Element} Element to render.
  */
-export default function save() {
+export default function save({ attributes }) {
+	const { showIdColumn, showFirstNameColumn, showLastNameColumn, showEmailColumn, showDateColumn } = attributes;
+
+	const renderTableRows = () => {
+		const { apiData } = attributes;
+
+		if (!apiData || apiData.length === 0) {
+			return (
+				<tr>
+					<td colSpan="5">No data available</td>
+				</tr>
+			);
+		}
+
+		return apiData.map((dataItem, index) => (
+			<tr key={index}>
+				{showIdColumn && <td>{dataItem.id}</td>}
+				{showFirstNameColumn && <td>{dataItem.first_name}</td>}
+				{showLastNameColumn && <td>{dataItem.last_name}</td>}
+				{showEmailColumn && <td>{dataItem.email}</td>}
+				{showDateColumn && <td>{dataItem.date}</td>}
+			</tr>
+		));
+	};
+
 	return (
-		<p { ...useBlockProps.save() }>
-			{ 'Am Apiblock – hello from the saved content!' }
-		</p>
+		<div {...useBlockProps.save()}>
+			<table className='am-apidata-table'>
+				<thead>
+					<tr>
+						{showIdColumn && <th>ID</th>}
+						{showFirstNameColumn && <th>First Name</th>}
+						{showLastNameColumn && <th>Last Name</th>}
+						{showEmailColumn && <th>Email</th>}
+						{showDateColumn && <th>Date</th>}
+					</tr>
+				</thead>
+				<tbody>{renderTableRows()}</tbody>
+			</table>
+		</div>
 	);
 }
+
+

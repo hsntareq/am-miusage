@@ -2,8 +2,70 @@
 /**
  * load_amapi_data_table
  *
- * 
+ *
  */
+
+
+// Add your block in your theme or plugin functions.php file
+// function my_dynamic_block_init() {
+// 	register_block_type( 'hsntareq/am-miusage-api', array(
+// 		'render_callback' => 'my_dynamic_block_render',
+// 	) );
+// }
+
+// add_action( 'init', 'my_dynamic_block_init' );
+
+// Your render callback function
+function amapi_data_block_render( $attributes, $content ) {
+	// Fetch and process dynamic data
+	$dynamic_data = my_fetch_dynamic_data();
+
+	// Generate the HTML for your block
+	$html = '<div class="am-apidata-table">';
+	$html .= '<table>';
+	$html .= '<thead><tr>';
+
+	// Add table headers based on attributes
+	if ( $attributes['showIdColumn'] ) {
+		$html .= '<th>ID</th>';
+	}
+	// Add other headers based on other attributes
+
+	$html .= '</tr></thead>';
+	$html .= '<tbody>';
+
+	// Add table rows based on dynamic data and attributes
+	foreach ( $dynamic_data as $dataItem ) {
+		$html .= '<tr>';
+
+		if ( $attributes['showIdColumn'] ) {
+			$html .= '<td>' . esc_html( $dataItem['id'] ) . '</td>';
+		}
+		// Add other cells based on other attributes
+
+		$html .= '</tr>';
+	}
+
+	$html .= '</tbody></table>';
+	$html .= '</div>';
+
+	return $html;
+}
+
+// Function to fetch dynamic data
+function my_fetch_dynamic_data() {
+	// Your code to fetch dynamic data from the API or database
+	// For example:
+	// $data = get_data_from_api();
+	$data = array(
+		array( 'id' => 1, 'name' => 'John Doe' ),
+		array( 'id' => 2, 'name' => 'Jane Doe' ),
+	);
+
+	return $data;
+}
+
+
 
 if ( ! function_exists( 'load_amapi_data_table' ) ) {
 	function load_amapi_data_table() {

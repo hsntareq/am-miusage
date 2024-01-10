@@ -13,11 +13,11 @@ class Class_Ajax_Request {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
 		add_action( 'wp_ajax_nopriv_load_amapi_data', [ $this, 'load_amapi_data' ] );
 	}
-	public function load_amapi_data() {
+	public function load_amapi_data_data() {
 		WP_CLI::runcommand( 'wp refresh_forcefully' );
 	}
 
-	public function load_amapi_data_wp_cli() {
+	public function load_amapi_data() {
 		$request_args = array(
 			'headers' => array(
 				'Content-Type' => 'application/json'

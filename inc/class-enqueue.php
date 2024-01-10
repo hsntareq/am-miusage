@@ -27,6 +27,7 @@ class Enqueue {
 	 */
 	public function load_plugin_block_scripts() {
 		wp_enqueue_script( 'ampi_block_script', AMAPI_PLUGIN_URI . 'build/ampi_block.js', array(), AMAPI_VERSION );
+		wp_enqueue_style( 'ampi_style', AMAPI_PLUGIN_URI . 'build/ampi_style.css', null, AMAPI_VERSION );
 	}
 
 	/**
@@ -40,7 +41,6 @@ class Enqueue {
 			wp_localize_script( 'ampi_script', 'amapidata', array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 			) );
-			wp_enqueue_style( 'ampi_style', AMAPI_PLUGIN_URI . 'build/ampi_style.css', null, AMAPI_VERSION );
 			wp_enqueue_style( 'ampi_smtp_style', AMAPI_PLUGIN_URI . 'src/smtp-admin.min.css', null, AMAPI_VERSION );
 		}
 	}
