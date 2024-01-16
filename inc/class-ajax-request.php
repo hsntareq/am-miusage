@@ -9,12 +9,6 @@ namespace Miusase;
  */
 
 
-// if ( ! class_exists( 'WP_CLI_Command' ) ) {
-// 	// Include the necessary WP-CLI files
-// 	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli.php';
-// 	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli-command.php';
-// }
-
 class Class_Ajax_Request {
 	public function __construct() {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
@@ -22,12 +16,13 @@ class Class_Ajax_Request {
 	}
 
 	public function load_amapi_data( $cli = false ) {
-		if ( $cli === "" ) {
-			if ( get_transient( 'amapi_data_loaded' ) ) {
-				wp_redirect( admin_url( '/admin.php?page=amapi-table-page' ) );
-				exit;
-			}
-			wp_send_json( 'Data Already Exists. Please try again after an hour.' );
+		if ( $cli == "" && get_transient( 'amapi_data_loaded' ) == true ) {
+			wp_send_json_success();
+			exit;
+		}
+
+		if( $cli && get_transient( 'amapi_data_loaded' ) ){
+			delete_transient( 'amapi_data_loaded' );
 		}
 
 		$request_args = array(
@@ -71,10 +66,7 @@ class Class_Ajax_Request {
 				wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
 			}
 		}
-		if(get_transient( 'amapi_data_loaded' )){
-			delete_transient( 'amapi_data_loaded' );
-		}
-		set_transient( 'amapi_data_loaded', true, 60 * 60 );
+		set_transient( 'amapi_data_loaded', true, 60*60 );
 		wp_send_json_success( $response_body->data );
 	}
 }

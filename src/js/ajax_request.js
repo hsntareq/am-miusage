@@ -1,7 +1,6 @@
 import './working';
 
 const ajax_request = (action, { type = 'GET', ...rest } = {}) => {
-	console.log(type);
 	const formData = new FormData();
 	formData.append('action', action);
 
@@ -32,17 +31,15 @@ const ajax_request = (action, { type = 'GET', ...rest } = {}) => {
 	}
 };
 
-
 document.addEventListener("DOMContentLoaded", function () {
 	var table = document.querySelector('.wp-list-table');
 	var loader = document.querySelector('.loader');
-	// console.log(table.querySelector('tbody tr.no-items'));
 	loader.style.display = 'block';
 
 	if (table && table.querySelector('tbody tr.no-items') !== null) {
 		ajax_request('load_amapi_data', { type: 'POST' })
 			.then(() => {
-				//location.reload()
+				location.reload()
 			})
 
 	} else {
@@ -50,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
 			loader.style.display = 'none';
 		}
 	}
-
 
 	var refreshButton = document.getElementById("refresh_button");
 	refreshButton && refreshButton.addEventListener("click", function () {
@@ -66,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 	});
 
-	var wpcliButton = document.getElementById("wpcli_button");
+	/* var wpcliButton = document.getElementById("wpcli_button");
 	wpcliButton && wpcliButton.addEventListener("click", function () {
 		loader.style.display = 'block';
 		ajax_request('load_amapi_wpcli_data', { type: 'POST' })
@@ -78,5 +74,5 @@ document.addEventListener("DOMContentLoaded", function () {
 			.catch(error => {
 				console.error(error);
 			});
-	});
+	}); */
 });
