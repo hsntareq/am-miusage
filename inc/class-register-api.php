@@ -17,7 +17,7 @@ class Register_API {
 	public function amapi_awesome_func() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'am_miusage_api';
-		$table_data = $wpdb->get_results( "SELECT * FROM {$table_name}" );
+		$table_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i", $table_name ) );
 		wp_send_json( $table_data );
 	}
 }
