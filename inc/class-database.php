@@ -34,6 +34,8 @@ class Class_Database {
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
+
+		
 	}
 
 	public function amapi_delete_db_table() {
@@ -41,6 +43,8 @@ class Class_Database {
 		$table_name = $wpdb->prefix . 'am_miusage_api';
 		$wpdb->query( $wpdb->prepare( "DROP TABLE IF EXISTS %s", $table_name ) );
 
-		wp_clear_scheduled_hook( 'amapi_cron_hook' );
+		if(get_transient( 'amapi_data_loaded' )){
+			delete_transient( 'amapi_data_loaded' );
+		}
 	}
 }

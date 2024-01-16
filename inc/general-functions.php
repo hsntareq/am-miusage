@@ -104,18 +104,6 @@ if ( ! function_exists( 'load_amapi_data_table' ) ) {
 	}
 }
 
-if ( ! function_exists( 'amapi_cron_job' ) ) {
-	/**
-	 * amapi_cron_job
-	 *
-	 * @return void
-	 */
-	function amapi_cron_job() {
-		( new Miusase\Class_Ajax_Request() )->load_amapi_data();
-	}
-	add_action( 'amapi_cron_hook', 'amapi_cron_job' );
-}
-
 if ( ! function_exists( 'plugin_activation' ) ) {
 	/**
 	 * plugin_activation
@@ -123,41 +111,7 @@ if ( ! function_exists( 'plugin_activation' ) ) {
 	 * @return void
 	 */
 	function plugin_activation() {
-		if ( ! wp_next_scheduled( 'amapi_cron_hook' ) ) {
-			wp_schedule_event( time(), 'ampi_five_minutes', 'amapi_cron_hook' );
-		}
+		( new \Miusase\Class_Ajax_Request() )->load_amapi_data();
 	}
-	add_action( 'init', 'plugin_activation' );
-}
-
-if ( ! function_exists( 'amapi_custom_cron_schedule' ) ) {
-	/**
-	 * amapi_custom_cron_schedule
-	 *
-	 * @param mixed $schedules
-	 *
-	 * @return array
-	 */
-	function amapi_custom_cron_schedule( $schedules ) {
-		if ( ! isset( $schedules['ampi_minute'] ) ) {
-			$schedules['ampi_minute'] = array(
-				'interval' => 60,
-				'display'  => __( 'Every Minute' )
-			);
-		}
-		if ( ! isset( $schedules['ampi_hour'] ) ) {
-			$schedules['ampi_hour'] = array(
-				'interval' => 3600,
-				'display'  => __( 'Every Hour' )
-			);
-		}
-		if ( ! isset( $schedules['ampi_five_minutes'] ) ) {
-			$schedules['ampi_five_minutes'] = array(
-				'interval' => 300,
-				'display'  => __( 'Every 5 Minutes' )
-			);
-		}
-		return $schedules;
-	}
-	add_filter( 'cron_schedules', 'amapi_custom_cron_schedule' );
+	register_activation_hook( __FILE__, 'plugin_activation' );
 }
