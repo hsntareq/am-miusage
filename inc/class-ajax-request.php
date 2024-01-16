@@ -1,4 +1,5 @@
 <?php
+ namespace Miusase;
 /**
  * Ajax Request
  *
@@ -6,15 +7,12 @@
  * @since   1.0.0
  */
 
-namespace Miusase;
 
 // if ( ! class_exists( 'WP_CLI_Command' ) ) {
 // 	// Include the necessary WP-CLI files
 // 	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli.php';
 // 	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli-command.php';
 // }
-
-use Miusase\Force_Refresh_Data;
 
 class Class_Ajax_Request {
 	public function __construct() {
@@ -25,10 +23,10 @@ class Class_Ajax_Request {
 	}
 
 	public function load_amapi_wpcli_data() {
-		wp_send_json_success( 'WP CLI Command Executed!' );
-		// ( new Force_Refresh_Data() )->execute( [], [] );
+		// wp_send_json_success( 'WP CLI Command Executed!' );
+		// ( new \Miusage\Force_Refresh_Data() )->execute( [], [] );
+		(new \Miusage\Force_Refresh_Data())->cli_run();
 	}
-
 
 	public function amapi_reschedule_cron() {
 		if ( wp_next_scheduled( 'amapi_cron_hook' ) ) {
@@ -37,7 +35,7 @@ class Class_Ajax_Request {
 		wp_schedule_event( time(), 'ampi_five_minutes', 'amapi_cron_hook' );
 	}
 
-	public function load_amapi_data() {
+	public function load_amapi_data($cli = false) {
 		$request_args = array(
 			'headers' => array(
 				'Content-Type' => 'application/json',
