@@ -35,7 +35,7 @@ class Class_Data_List_Table extends \WP_List_Table {
 
 	public function get_sortable_columns() {
 		return [
-			'id'         => [ 'ID', true ],
+			'id'         => [ 'id', true ],
 			'first_name' => [ 'first_name', true ],
 			'last_name'  => [ 'last_name', true ],
 			'email'      => [ 'email', true ],
@@ -46,17 +46,14 @@ class Class_Data_List_Table extends \WP_List_Table {
 	protected function column_default( $item, $column_name ) {
 		switch ( $column_name ) {
 			case 'value':
-				// Sanitize and escape as needed
 				$value = sanitize_text_field( $item->$column_name );
 				return esc_html( $value );
 			default:
-				// Escape HTML output
 				return isset( $item->$column_name ) ? esc_html( $item->$column_name ) : '';
 		}
 	}
 
 	protected function column_cb( $item ) {
-		// Escape attribute value
 		return sprintf(
 			'<input type="checkbox" name="data_id[]" value="%s" />', esc_attr( $item->id )
 		);
@@ -80,10 +77,12 @@ class Class_Data_List_Table extends \WP_List_Table {
 			'number' => $per_page,
 			'offset' => $offset,
 		];
+
 		if ( isset( $_REQUEST['orderby'] ) && isset( $_REQUEST['order'] ) ) {
 			$args['orderby'] = sanitize_text_field( $_REQUEST['orderby'] );
 			$args['order']   = sanitize_text_field( $_REQUEST['order'] );
 		}
+
 		$this->items = amapi_get_all_data( $args );
 	}
 

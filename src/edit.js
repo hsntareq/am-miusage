@@ -50,6 +50,7 @@ export default function Edit({ attributes, setAttributes }) {
 	useEffect(() => {
 		apiFetch({ path: `/amiusage/data` })
 			.then(posts => {
+				console.log(posts);
 				setAttributes({ apiData: posts });
 			})
 			.catch(error => {

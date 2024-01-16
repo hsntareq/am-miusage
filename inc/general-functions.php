@@ -8,7 +8,8 @@
 
 // Function to generate the dynamic table
 function generate_dynamic_table( $attributes, $table_data ) {
-	$html = '<table class="' . $attributes['className'] . '">';
+
+	$html = '<table>';
 	$html .= '<thead>';
 	$html .= '<tr>';
 	if ( $attributes['showIdColumn'] ) {
@@ -65,25 +66,37 @@ function amapi_data_block_render( $attributes, $content ) {
 
 function amapi_get_all_data( $args = [] ) {
 	global $wpdb;
-	$defaults = [
+
+	$args = wp_parse_args( $args, [
 		'number'  => 20,
 		'offset'  => 0,
 		'orderby' => 'id',
 		'order'   => 'ASC',
-	];
+	] );
 
-	$args = wp_parse_args( $args, $defaults );
+	$table_name = $wpdb->prefix . 'am_miusage_api';
+	$order      = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
+	$order      = sanitize_sql_orderby( "{$order}" );
+
 
 	$items = $wpdb->get_results(
 		$wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}am_miusage_api ORDER BY {$args['orderby']} {$args['order']} LIMIT %d, %d",
-			$args['offset'], $args['number']
+			// https://developer.wordpress.org/reference/classes/wpdb/prepare/#description
+			"SELECT * FROM %i ORDER BY %i {$order} LIMIT %d, %d",
+			$table_name, $args['orderby'], $args['offset'], $args['number']
 		)
 	);
+
 	return $items;
 }
 
+
 if ( ! function_exists( 'load_amapi_data_table' ) ) {
+	/**
+	 * load_amapi_data_table
+	 *
+	 * @return void
+	 */
 	function load_amapi_data_table() {
 		$table = new Miusase\Class_Data_List_Table();
 		$table->prepare_items();
@@ -111,7 +124,7 @@ if ( ! function_exists( 'plugin_activation' ) ) {
 	 */
 	function plugin_activation() {
 		if ( ! wp_next_scheduled( 'amapi_cron_hook' ) ) {
-			wp_schedule_event( time(), 'every_five_minutes', 'amapi_cron_hook' );
+			wp_schedule_event( time(), 'ampi_five_minutes', 'amapi_cron_hook' );
 		}
 	}
 	add_action( 'init', 'plugin_activation' );
@@ -126,20 +139,20 @@ if ( ! function_exists( 'amapi_custom_cron_schedule' ) ) {
 	 * @return array
 	 */
 	function amapi_custom_cron_schedule( $schedules ) {
-		if ( ! isset( $schedules['every_minute'] ) ) {
-			$schedules['every_minute'] = array(
+		if ( ! isset( $schedules['ampi_minute'] ) ) {
+			$schedules['ampi_minute'] = array(
 				'interval' => 60,
 				'display'  => __( 'Every Minute' )
 			);
 		}
-		if ( ! isset( $schedules['every_hour'] ) ) {
-			$schedules['every_hour'] = array(
+		if ( ! isset( $schedules['ampi_hour'] ) ) {
+			$schedules['ampi_hour'] = array(
 				'interval' => 3600,
 				'display'  => __( 'Every Hour' )
 			);
 		}
-		if ( ! isset( $schedules['every_five_minutes'] ) ) {
-			$schedules['every_five_minutes'] = array(
+		if ( ! isset( $schedules['ampi_five_minutes'] ) ) {
+			$schedules['ampi_five_minutes'] = array(
 				'interval' => 300,
 				'display'  => __( 'Every 5 Minutes' )
 			);

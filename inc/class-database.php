@@ -11,10 +11,10 @@ class Class_Database {
 	public function __construct() {
 		register_activation_hook( __FILE__, array( $this, 'amapi_create_db_table' ) );
 	}
-	public function amapi_get_data( $table_name, $colum_name = '*', ) {
+	public function amapi_get_data( $table_name, $column_name = '*', ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . $table_name;
-		return $wpdb->get_results( "SELECT $colum_name FROM $table_name" );
+		return $wpdb->get_results( $wpdb->prepare( "SELECT %s FROM %s", $column_name, $table_name ) );
 	}
 
 	public function amapi_create_db_table() {
@@ -39,7 +39,8 @@ class Class_Database {
 	public function amapi_delete_db_table() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'am_miusage_api';
-		$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		$wpdb->query( $wpdb->prepare( "DROP TABLE IF EXISTS %s", $table_name ) );
+
 		wp_clear_scheduled_hook( 'amapi_cron_hook' );
 	}
 }

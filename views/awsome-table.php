@@ -1,3 +1,12 @@
+<?php
+/**
+ * AMPI Table for admin page.
+ *
+ * @package Miusage
+ * @since   1.0.0
+ */
+
+?>
 <div id="amapi-page-header">
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 </div>
@@ -10,6 +19,9 @@
 			<div style="display:flex;align-items:center;gap:20px;">
 				<div class="loader" style="display:none;"><span class="spinner is-active"
 						style="float:none;margin-top:0"></span> Loading...</div>
+				<button class="button button-primary" id="wpcli_button">
+					WP CLI
+				</button>
 				<button class="button button-primary" id="refresh_button">
 					Refresh
 				</button>
