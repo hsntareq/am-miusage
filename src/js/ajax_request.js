@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 	});
 
-	/* var wpcliButton = document.getElementById("wpcli_button");
+	var wpcliButton = document.getElementById("wpcli_button");
 	wpcliButton && wpcliButton.addEventListener("click", function () {
 		loader.style.display = 'block';
 		ajax_request('load_amapi_wpcli_data', { type: 'POST' })
@@ -74,5 +74,5 @@ document.addEventListener("DOMContentLoaded", function () {
 			.catch(error => {
 				console.error(error);
 			});
-	}); */
+	});
 });

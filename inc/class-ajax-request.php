@@ -13,6 +13,17 @@ class Class_Ajax_Request {
 	public function __construct() {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
 		add_action( 'wp_ajax_nopriv_load_amapi_data', [ $this, 'load_amapi_data' ] );
+
+
+		add_action( 'wp_ajax_load_amapi_wpcli_data', [ $this, 'load_amapi_wpcli_data' ] );
+		add_action( 'wp_ajax_nopriv_load_amapi_wpcli_data', [ $this, 'load_amapi_wpcli_data' ] );
+	}
+	public function load_amapi_wpcli_data() {
+		shell_exec( 'wp refresh_forcefully execute' );
+
+		// \WP_CLI::runcommand( 'refresh_forcefully execute' );
+
+		// (new \Miusage\Force_Refresh_Data())->execute([],[]);
 	}
 
 	public function load_amapi_data( $cli = false ) {
@@ -21,7 +32,7 @@ class Class_Ajax_Request {
 			exit;
 		}
 
-		if( $cli && get_transient( 'amapi_data_loaded' ) ){
+		if ( $cli && get_transient( 'amapi_data_loaded' ) ) {
 			delete_transient( 'amapi_data_loaded' );
 		}
 
@@ -66,7 +77,7 @@ class Class_Ajax_Request {
 				wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
 			}
 		}
-		set_transient( 'amapi_data_loaded', true, 60*60 );
+		set_transient( 'amapi_data_loaded', true, 60 * 60 );
 		wp_send_json_success( $response_body->data );
 	}
 }
