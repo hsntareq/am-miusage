@@ -18,6 +18,7 @@
 			"Miusase\\": "./inc"
 		},
 		"files": [
+			"./inc/general-functions.php",
 			"./inc/spl-autoload.php"
 		]
 	},
