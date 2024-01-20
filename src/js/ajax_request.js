@@ -62,17 +62,41 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 	});
 
+	// var wpcliButton = document.getElementById("wpcli_button");
+	// wpcliButton && wpcliButton.addEventListener("click", function () {
+	// 	loader.style.display = 'block';
+	// 	ajax_request('load_amapi_wpcli_data', { type: 'POST' })
+	// 		.then(response => {
+	// 			if (response.success === true) {
+	// 				// location.reload();
+	// 			}
+	// 		})
+	// 		.catch(error => {
+	// 			console.error(error);
+	// 		});
+	// });
+
 	var wpcliButton = document.getElementById("wpcli_button");
 	wpcliButton && wpcliButton.addEventListener("click", function () {
 		loader.style.display = 'block';
-		ajax_request('load_amapi_wpcli_data', { type: 'POST' })
-			.then(response => {
-				if (response.success === true) {
-					// location.reload();
-				}
+		const paramValue = 'your_parameter_value';
+		fetch(amapidata.ajax_url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({
+				action: 'load_amapi_wpcli_data',
+				param_value: paramValue,
+			}),
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log(data);
 			})
 			.catch(error => {
-				console.error(error);
+				console.error('Error:', error);
 			});
+
 	});
 });

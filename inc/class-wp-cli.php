@@ -1,5 +1,6 @@
 <?php
- namespace Miusage;
+namespace Miusage;
+
 /**
  * WP-CLI Command to refresh data forcefully.
  *
@@ -20,8 +21,14 @@ class Force_Refresh_Data extends \WP_CLI_Command {
 	 * @param array $assoc_args Command associative arguments.
 	 */
 	public function execute( $args, $assoc_args ) {
-		( new \Miusase\Class_Ajax_Request() )->load_amapi_data(true);
-		\WP_CLI::success( 'Data Refreshed Forcefully!' );
+		// $msg = ( new \Miusase\Class_Ajax_Request() )->load_amapi_wpcli_data();
+		// \WP_CLI::success( 'Data Refreshed Forcefully!');
+		$param_value = isset( $assoc_args['param'] ) ? $assoc_args['param'] : 'default';
+		$data        = $data = array(
+			'param'  => $param_value,
+			'result' => 'your_custom_data_here',
+		);
+		\WP_CLI::success( "Custom data retrieved: " . json_encode( $data ) );
 	}
 }
 
