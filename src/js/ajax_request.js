@@ -51,10 +51,28 @@ document.addEventListener("DOMContentLoaded", function () {
 	var refreshButton = document.getElementById("refresh_button");
 	refreshButton && refreshButton.addEventListener("click", function () {
 		loader.style.display = 'block';
+		let toast_message = document.querySelector('.toast_message');
 		ajax_request('load_amapi_data', { type: 'POST' })
 			.then(response => {
+				loader.style.display = 'none';
+				toast_message.innerHTML = '';
 				if (response.success === true) {
-					location.reload();
+					let toast_html = (message) => `<div class="notice notice-warning notice-alt is-dismissible" style="transition:all 300ms;"><p>${message}</p>
+				<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>`;
+
+					toast_message.style.display = 'block';
+
+					toast_message.innerHTML = toast_html(response.data);
+
+					let isNoticeBtn = toast_message.querySelector('.notice-dismiss');
+
+					isNoticeBtn && isNoticeBtn.addEventListener('click', function () {
+						toast_message.innerHTML = '';
+					});
+
+					setTimeout(() => {
+						toast_message.innerHTML = '';
+					}, 3000);
 				}
 			})
 			.catch(error => {
