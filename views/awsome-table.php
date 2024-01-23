@@ -21,10 +21,8 @@ $transientTimestamp = get_transient( 'timeout_amapi_data_loaded' );
 	<div style="display: flex;align-items:center;justify-content:space-between">
 		<div class="amapi-page-title" style="width:100%;display:flex;align-items:center;justify-content:space-between;">
 			<a href="javascript:void(0)" class="tab active"> General </a>
-			<div style="display:flex;align-items:center;gap:10px;">
-				<?php if ( $transientTimestamp ) { ?>
-					<p id="viewTime"></p>
-				<?php } ?>
+			<div id="refresh_button_parent" style="display:flex;align-items:center;gap:10px;">
+				<p id="viewTime" data-transient-time="<?php echo $transientTimestamp ?>"></p>
 				<div style="width:22px;">
 					<div class="loader" style="display:none;"><span class="spinner is-active"
 							style="float:none;margin:0"></span>
@@ -41,16 +39,3 @@ $transientTimestamp = get_transient( 'timeout_amapi_data_loaded' );
 		<form action="" method="post"> <?php load_amapi_data_table(); ?></form>
 	</div>
 </div>
-<script>
-	document.addEventListener("DOMContentLoaded", function () {
-		var viewTime = document.getElementById("viewTime");
-		if (viewTime) {
-			var transientTime = <?php echo json_encode( $transientTimestamp ); ?>;
-			function updateTime() {
-				viewTime.innerText = 'timeout duration:' + new Date((transientTime - (Date.now() / 1000)) * 1000).toISOString().substr(11, 8);
-			};
-			updateTime();
-			setInterval(updateTime, 1000);
-		}
-	});
-</script>

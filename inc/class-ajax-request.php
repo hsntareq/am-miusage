@@ -7,23 +7,16 @@ namespace Miusase;
  * @package Miusage
  * @since   1.0.0
  */
-// require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli.php';
-// require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli-command.php';
 
 class Class_Ajax_Request {
 	public function __construct() {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
 		add_action( 'wp_ajax_nopriv_load_amapi_data', [ $this, 'load_amapi_data' ] );
 	}
-
 	public function load_amapi_data( $cli = false ) {
 		if ( $cli == "" && get_transient( 'amapi_data_loaded' ) == true ) {
-			wp_send_json_success('Data already loaded.');
+			wp_send_json_success( 'Data already loaded.' );
 			exit;
-		}
-
-		if( $cli && get_transient( 'amapi_data_loaded' ) ){
-			delete_transient( 'amapi_data_loaded' );
 		}
 
 		$request_args = array(
@@ -66,13 +59,15 @@ class Class_Ajax_Request {
 				wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
 			}
 		}
-		set_transient( 'amapi_data_loaded', true, 60 * 60 );
-		wp_send_json_success( $response_body->data );
-	}
-	function custom_ajax_handler() {
-		$param_value = sanitize_text_field( $_POST['param_value'] );
-		$output      = shell_exec( "wp refresh_forcefully execute --param=$param_value" );
-		echo json_encode( array( 'data' => $output ) );
-		wp_die();
+		set_transient( 'amapi_data_loaded', true, 20 );
+		if ( $cli && get_transient( 'amapi_data_loaded' ) ) {
+			wp_send_json( $response_body->data->rows );
+		} else {
+			$response = [
+				'response_data'  => $response_body->data,
+				'transient_time' => get_transient( 'timeout_amapi_data_loaded' ),
+			];
+			wp_send_json_success( $response );
+		}
 	}
 }
