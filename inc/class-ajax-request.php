@@ -64,7 +64,7 @@ class Class_Ajax_Request {
 			wp_send_json( $response_body->data->rows );
 		} else {
 			$response = [
-				'response_data'  => $response_body->data,
+				'response_data'  => $response_body->data->rows,
 				'transient_time' => get_transient( 'timeout_amapi_data_loaded' ),
 			];
 			wp_send_json_success( $response );
