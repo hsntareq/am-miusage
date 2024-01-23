@@ -22,6 +22,41 @@ class Class_Data_List_Table extends \WP_List_Table {
 		] );
 	}
 
+
+	public function display() {
+		$singular = $this->_args['singular'];
+
+		$this->display_tablenav( 'top' );
+
+		$this->screen->render_screen_reader_content( 'heading_list' );
+		?>
+		<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?> amapi-datatable">
+			<?php $this->print_table_description(); ?>
+			<thead>
+				<tr>
+					<?php $this->print_column_headers(); ?>
+				</tr>
+			</thead>
+
+			<tbody id="the-list" <?php
+			if ( $singular ) {
+				echo " data-wp-lists='list:$singular'";
+			}
+			?>>
+				<?php $this->display_rows_or_placeholder(); ?>
+			</tbody>
+
+			<tfoot>
+				<tr>
+					<?php $this->print_column_headers( false ); ?>
+				</tr>
+			</tfoot>
+
+		</table>
+		<?php
+		$this->display_tablenav( 'bottom' );
+	}
+
 	public function get_columns() {
 		return [
 			'cb'         => '<input type="checkbox" />',
