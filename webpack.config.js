@@ -9,7 +9,6 @@ module.exports = {
 			'./src/js/ajax_request.js',
 			'./src/js/lib.js',
 		],
-		// 'amapi_block': ['./src/js/block.js'],
 		'amapi_style': ['./src/scss/plugin.scss'],
 	},
 };

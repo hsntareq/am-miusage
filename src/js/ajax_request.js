@@ -6,7 +6,7 @@
  */
 
 import { updateTimeStamp } from "./lib";
-import { __ } from '@wordpress/i18n';
+const { __ } = require('@wordpress/i18n');
 const ajax_request = (action, { type = 'GET', ...rest } = {}) => {
 	const formData = new FormData();
 	formData.append('action', action);
