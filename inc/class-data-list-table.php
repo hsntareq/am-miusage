@@ -15,8 +15,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 class Class_Data_List_Table extends \WP_List_Table {
 	public function __construct() {
 		parent::__construct( [
-			'singular' => esc_html__( 'Data', 'amapi' ),
-			'plural'   => esc_html__( 'Datas', 'amapi' ),
+			'singular' => __( 'Data', 'amapi' ),
+			'plural'   => __( 'Datas', 'amapi' ),
 			'ajax'     => false,
 			'screen'   => 'amapi-table-page'
 		] );
@@ -60,11 +60,11 @@ class Class_Data_List_Table extends \WP_List_Table {
 	public function get_columns() {
 		return [
 			'cb'         => '<input type="checkbox" />',
-			'id'         => esc_html__( 'ID', 'amapi' ),
-			'first_name' => esc_html__( 'First Name', 'amapi' ),
-			'last_name'  => esc_html__( 'Last Name', 'amapi' ),
-			'email'      => esc_html__( 'Email', 'amapi' ),
-			'date'       => esc_html__( 'Date', 'amapi' ),
+			'id'         => __( 'ID', 'amapi' ),
+			'first_name' => __( 'First Name', 'amapi' ),
+			'last_name'  => __( 'Last Name', 'amapi' ),
+			'email'      => __( 'Email', 'amapi' ),
+			'date'       => __( 'Date', 'amapi' ),
 		];
 	}
 
@@ -82,9 +82,9 @@ class Class_Data_List_Table extends \WP_List_Table {
 		switch ( $column_name ) {
 			case 'value':
 				$value = sanitize_text_field( $item->$column_name );
-				return esc_html( $value );
+				return esc_attr( $value, 'amapi' );
 			default:
-				return isset( $item->$column_name ) ? esc_html( $item->$column_name ) : '';
+				return isset( $item->$column_name ) ? esc_attr( $item->$column_name, 'amapi' ) : '';
 		}
 	}
 

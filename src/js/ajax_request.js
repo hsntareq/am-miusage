@@ -1,4 +1,12 @@
+/**
+ * Ajax requests of the amapi plugin.
+ *
+ * @package Miusage
+ * @since 1.0.0
+ */
+
 import { updateTimeStamp } from "./lib";
+import { __ } from '@wordpress/i18n';
 const ajax_request = (action, { type = 'GET', ...rest } = {}) => {
 	const formData = new FormData();
 	formData.append('action', action);
@@ -54,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
 				toast_message.innerHTML = '';
 				if (response.success === true) {
 
-					let toast_html = (message) => `<div class="notice notice-${typeof (response.data) == 'string' ? 'warning' : 'success'} notice-alt is-dismissible" style="transition:all 300ms;"><p>${message}</p>
-					<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>`;
+					let toast_html = (message) => `<div class="notice notice-${typeof (response.data) == 'string' ? 'warning' : 'success'} notice-alt is-dismissible" style="transition:all 300ms;"><p>${__(message, 'amapi')}</p>
+					<button type="button" class="notice-dismiss"><span class="screen-reader-text">${__('Dismiss this notice.', 'amapi')}</span></button></div>`;
 
 					let formattedDate = (date) => new Date(date * 1000).toISOString().replace("T", " ").replace(/\.\d+Z$/, '');
 					let table_rows = (rowData = {}) => {
@@ -66,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 						return Object.values(rowData).map((row) => {
 							return `
-							<tr><th scope="row" class="check-column"><input type="checkbox" name="data_id[]" value="${row.id}"></th><td class="id column-id has-row-actions column-primary" data-colname="ID">${row.id}<button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class="first_name column-first_name" data-colname="First Name">${row.fname}</td><td class="last_name column-last_name" data-colname="Last Name">${row.lname}</td><td class="email column-email" data-colname="Email">${row.email}</td><td class="date column-date" data-colname="Date">${formattedDate(row.date)}</td></tr>`;
+							<tr><th scope="row" class="check-column"><input type="checkbox" name="data_id[]" value="${row.id}"></th><td class="id column-id has-row-actions column-primary" data-colname="ID">${row.id}<button type="button" class="toggle-row"><span class="screen-reader-text">Show more details</span></button></td><td class="first_name column-first_name" data-colname="First Name">${row.fname}</td><td class="last_name column-last_name" data-colname="Last Name">${row.lname}</td><td class="email column-email" data-colname="Email">${row.email}</td><td class="date column-date" data-colname="Date">${__(formattedDate(row.date), 'amapi')}</td></tr>`;
 						}).join('');
 					}
 
@@ -78,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 					toast_message.style.display = 'block';
 
-					toast_message.innerHTML = toast_html(typeof (response.data) == 'string' ? response.data : 'Data updated successfully');
+					toast_message.innerHTML = toast_html(typeof (response.data) == 'string' ? response.data : __('Data updated successfully', 'amapi'));
 
 					let isNoticeBtn = toast_message.querySelector('.notice-dismiss');
 

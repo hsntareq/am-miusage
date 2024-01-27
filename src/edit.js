@@ -68,7 +68,7 @@ export default function Edit({ attributes, setAttributes }) {
 		if (!apiData || apiData.length === 0) {
 			return (
 				<tr>
-					<td colSpan="5">No data available</td>
+					<td colSpan="5">{__('No data available', 'amapi')}</td>
 				</tr>
 			);
 		}
@@ -87,29 +87,29 @@ export default function Edit({ attributes, setAttributes }) {
 	return (
 		<div {...useBlockProps()}>
 			<InspectorControls>
-				<PanelBody title="Table Columns" initialOpen={true}>
+				<PanelBody title={__('Table Columns', 'amapi')} initialOpen={true}>
 					<ToggleControl
 						label="ID"
 						checked={showIdColumn}
 						onChange={() => handleToggleChange('showIdColumn')}
 					/>
 					<ToggleControl
-						label="First Name"
+						label={__('First Name', 'amapi')}
 						checked={showFirstNameColumn}
 						onChange={() => handleToggleChange('showFirstNameColumn')}
 					/>
 					<ToggleControl
-						label="Last Name"
+						label={__('Last Name', 'amapi')}
 						checked={showLastNameColumn}
 						onChange={() => handleToggleChange('showLastNameColumn')}
 					/>
 					<ToggleControl
-						label="Email"
+						label={__('Email', 'amapi')}
 						checked={showEmailColumn}
 						onChange={() => handleToggleChange('showEmailColumn')}
 					/>
 					<ToggleControl
-						label="Date"
+						label={__('Date', 'amapi')}
 						checked={showDateColumn}
 						onChange={() => handleToggleChange('showDateColumn')}
 					/>
@@ -120,16 +120,16 @@ export default function Edit({ attributes, setAttributes }) {
 				<table >
 					<thead>
 						<tr>
-							{showIdColumn && <th>ID</th>}
-							{showFirstNameColumn && <th>First Name</th>}
-							{showLastNameColumn && <th>Last Name</th>}
-							{showEmailColumn && <th>Email</th>}
-							{showDateColumn && <th>Date</th>}
+							{showIdColumn && <th>__('ID', 'amapi')</th>}
+							{showFirstNameColumn && <th>__('First Name', 'amapi')</th>}
+							{showLastNameColumn && <th>__('Last Name', 'amapi')</th>}
+							{showEmailColumn && <th>__('Email', 'amapi')</th>}
+							{showDateColumn && <th>__('Date', 'amapi')</th>}
 						</tr>
 					</thead>
 					<tbody>{renderTableRows()}</tbody>
 				</table>
 			</div>
-		</div>
+		</div >
 	);
 }

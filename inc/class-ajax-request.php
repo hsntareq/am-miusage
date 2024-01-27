@@ -2,31 +2,44 @@
 namespace Miusase;
 
 /**
- * Ajax Request
+ * Ajax Request handller.
  *
  * @package Miusage
  * @since   1.0.0
  */
 
+/**
+ * This class is responsible for execute ajax requests.
+ */
 class Class_Ajax_Request {
+	/**
+	 * __construct
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
 		add_action( 'wp_ajax_nopriv_load_amapi_data', [ $this, 'load_amapi_data' ] );
 	}
+	/**
+	 * Load Amapi Data
+	 *
+	 * @param bool $cli
+	 *
+	 * @return [type]
+	 */
 	public function load_amapi_data( $cli = false ) {
 		if ( $cli == "" && get_transient( 'amapi_data_loaded' ) == true ) {
 			wp_send_json_success( 'Data already loaded.' );
 			exit;
 		}
 
-		$request_args = array(
+		$apiEndpoint = "https://miusage.com/v1/challenge/1/";
+		$response    = wp_remote_get( esc_url( $apiEndpoint ), array(
 			'headers' => array(
 				'Content-Type' => 'application/json',
 			),
-		);
-
-		$apiEndpoint = "https://miusage.com/v1/challenge/1/";
-		$response    = wp_remote_get( esc_url( $apiEndpoint ), $request_args );
+		) );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( "Error retrieving data from the API: " . esc_html( $response->get_error_message() ) );
@@ -43,6 +56,7 @@ class Class_Ajax_Request {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'am_miusage_api';
 		$wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
+		// https://developer.wordpress.org/reference/classes/wpdb/prepare/#changelog
 
 		foreach ( $rows as $data ) {
 			$data_to_insert = array(
@@ -59,9 +73,11 @@ class Class_Ajax_Request {
 				wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
 			}
 		}
-		set_transient( 'amapi_data_loaded', true, 20 );
+
+		set_transient( 'amapi_data_loaded', true, 60 * 60 );
+
 		if ( $cli && get_transient( 'amapi_data_loaded' ) ) {
-			wp_send_json( $response_body->data->rows );
+			return;
 		} else {
 			$response = [
 				'response_data'  => $response_body->data->rows,

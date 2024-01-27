@@ -11,7 +11,7 @@
  * License: GPLv2 or later
  * Text Domain: amapi
  *
- * @package api-block
+ * @package Miusage
  * @since 1.0.0
  */
 

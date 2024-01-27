@@ -1,5 +1,0 @@
-commands:
-  refresh_forcefully:
-    class: Force_Refresh_Data
-    require:
-      - class-wp-cli.php

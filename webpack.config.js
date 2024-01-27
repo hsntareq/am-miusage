@@ -5,15 +5,11 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		...defaultConfig.entry(),
-		'ampi_script': [
+		'amapi_script': [
 			'./src/js/ajax_request.js',
 			'./src/js/lib.js',
 		],
-		'ampi_block': ['./src/js/block.js'],
-		'ampi_style': ['./src/scss/plugin.scss'],
+		// 'amapi_block': ['./src/js/block.js'],
+		'amapi_style': ['./src/scss/plugin.scss'],
 	},
-	/* output: {
-		...defaultConfig.output,
-		path: path.resolve(__dirname, 'assets'),
-	}, */
 };
