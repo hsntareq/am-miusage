@@ -41,7 +41,7 @@ class Enqueue {
 			wp_localize_script( 'amapi_script', 'amapidata', array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 			) );
-			wp_enqueue_style( 'amapi_smtp_style', AMAPI_PLUGIN_URI . 'src/smtp-admin.min.css', null, AMAPI_VERSION );
+			wp_enqueue_style( 'amapi_smtp_style', AMAPI_PLUGIN_URI . 'build/amapi_style.css', null, AMAPI_VERSION );
 		}
 	}
 

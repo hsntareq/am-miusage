@@ -25,3 +25,51 @@
 		}
 	}
 }
+
+#wpcontent {
+	padding-left: 0 !important;
+	position: relative
+}
+
+#amapi-page-header {
+    border-top: 3.5px solid #e27730;
+    padding: 10px 20px;
+}
+
+#wp-mail-smtp .amapi-page-title {
+	min-height: 58px;
+	background-color: #fff;
+	font-size: 14px;
+	margin: 0 0 20px 0;
+	padding: 0 20px
+}
+
+#wp-mail-smtp .amapi-page-title a.tab {
+	border-bottom: 3px solid #fff;
+	box-shadow: none;
+	color: #666;
+	display: inline-block;
+	margin-right: 30px;
+	padding: 20px 0 17px 0;
+	text-decoration: none
+}
+
+#wp-mail-smtp .amapi-page-title a.tab.active {
+	border-color: #e27730
+}
+
+#wp-mail-smtp .amapi-page-title a.tab:hover {
+	border-color: #999
+}
+
+#wp-mail-smtp .amapi-page-content {
+	padding: 0 20px
+}
+
+#wp-mail-smtp .amapi-page-content *,
+#wp-mail-smtp .amapi-page-content *::before,
+#wp-mail-smtp .amapi-page-content *::after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box
+}

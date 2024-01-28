@@ -66,7 +66,7 @@ class Class_Database {
 	public function amapi_delete_db_table() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'am_miusage_api';
-		$wpdb->query( $wpdb->prepare( "DROP TABLE IF EXISTS %s", $table_name ) );
+		$wpdb->query( $wpdb->prepare( "DROP TABLE IF EXISTS %i", $table_name ) );
 
 		if ( get_transient( 'amapi_data_loaded' ) ) {
 			delete_transient( 'amapi_data_loaded' );
