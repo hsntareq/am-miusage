@@ -7,6 +7,8 @@
  */
 
 $transient_timestamp = get_transient( 'timeout_amapi_data_loaded' );
+$transient_timestamp = ( $transient_timestamp - time() ) < 0 ? 0 : $transient_timestamp;
+
 
 ?>
 <div id="amapi-page-header" style="display:flex;align-items:center;justify-content:space-between">
@@ -22,7 +24,7 @@ $transient_timestamp = get_transient( 'timeout_amapi_data_loaded' );
 		<div class="amapi-page-title" style="width:100%;display:flex;align-items:center;justify-content:space-between;">
 			<a href="javascript:void(0)" class="tab active"> <?php _e( 'General', 'amapi' ); ?> </a>
 			<div id="refresh_button_parent" style="display:flex;align-items:center;gap:10px;">
-				<p id="viewTime" data-transient-time="<?php esc_attr_e( $transient_timestamp, 'amapi' ); ?>"></p>
+				<p id="viewTime" data-transient-time="<?php esc_attr_e( $transient_timestamp ?? 0, 'amapi' ); ?>"></p>
 				<div style="width:22px;">
 					<div class="loader" style="display:none;">
 						<span class="spinner is-active" style="float:none;margin:0"></span>

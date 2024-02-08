@@ -29,8 +29,9 @@ class Class_Ajax_Request {
 	 * @return [type]
 	 */
 	public function load_amapi_data( $cli = false ) {
+
 		if ( $cli == "" && get_transient( 'amapi_data_loaded' ) == true ) {
-			wp_send_json_success( 'Data already loaded.' );
+			wp_send_json_success( 'Please wait until the countdown is finished' );
 			exit;
 		}
 
@@ -54,36 +55,48 @@ class Class_Ajax_Request {
 		$rows = $response_body->data->rows;
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'am_miusage_api';
-		$wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
+		$table_name   = $wpdb->prefix . 'am_miusage_api';
+		$isTableClose = $wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
+		$isTableData  = $wpdb->query( $wpdb->prepare( "SELECT * FROM %i", $table_name ) );
+
+		// echo 'data working';
+		// wp_send_json( $isTableData );
+
 		// https://developer.wordpress.org/reference/classes/wpdb/prepare/#changelog
+		if ( $isTableClose !== false && $isTableClose >= 0 ) {
+			foreach ( $rows as $data ) {
+				$data_to_insert = array(
+					'id'         => intval( $data->id ),
+					'first_name' => sanitize_text_field( $data->fname ),
+					'last_name'  => sanitize_text_field( $data->lname ),
+					'email'      => sanitize_email( $data->email ),
+					'date'       => gmdate( 'Y-m-d H:i:s', intval( $data->date ) ),
+				);
 
-		foreach ( $rows as $data ) {
-			$data_to_insert = array(
-				'id'         => intval( $data->id ),
-				'first_name' => sanitize_text_field( $data->fname ),
-				'last_name'  => sanitize_text_field( $data->lname ),
-				'email'      => sanitize_email( $data->email ),
-				'date'       => gmdate( 'Y-m-d H:i:s', intval( $data->date ) ),
-			);
+				$result = $wpdb->insert( $table_name, $data_to_insert );
 
-			$result = $wpdb->insert( $table_name, $data_to_insert );
-
-			if ( $result === false ) {
-				wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
+				if ( $result === false ) {
+					wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
+				}
 			}
-		}
 
-		set_transient( 'amapi_data_loaded', true, 60 * 60 );
+			set_transient( 'amapi_data_loaded', true, 1 * 20 );
 
-		if ( $cli && get_transient( 'amapi_data_loaded' ) ) {
-			return;
-		} else {
-			$response = [
-				'response_data'  => $response_body->data->rows,
-				'transient_time' => get_transient( 'timeout_amapi_data_loaded' ),
-			];
-			wp_send_json_success( $response );
+			// Convert the $rows stdClass to an array
+			$rows = json_decode( json_encode( $rows ), true );
+			usort( $rows, function ($a, $b) {
+				return $a['id'] - $b['id'];
+			} );
+
+			if ( $cli && get_transient( 'amapi_data_loaded' ) ) {
+				return;
+			} else {
+				$response_data = [
+					'response_data'  => $rows,
+					'transient_time' => get_transient( 'timeout_amapi_data_loaded' ),
+				];
+				wp_send_json_success( $response_data );
+			}
 		}
 	}
 }
