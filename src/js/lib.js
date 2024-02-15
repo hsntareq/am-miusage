@@ -13,12 +13,15 @@ export function formattedDate(date) {
 	return new Date(date * 1000).toISOString().replace("T", " ").replace(/\.\d+Z$/, '')
 };
 
-export function loadApiDataFromDatabase() {
+export function loadApiDataFromDatabase(clicked = false) {
+	if (clicked) {
+		toastMessage('warning', 'Wait');
+		return;
+	}
 	let table = document.querySelector('.wp-list-table');
 
 	viewLoading(true);
 	let isTableEmpty = table.querySelector('tbody tr.no-items') === null ? true : false;
-
 
 	ajaxRequest('load_amapi_data', { type: 'POST' })
 		.then(response => {
@@ -54,7 +57,7 @@ export function loadApiDataFromDatabase() {
 				}
 
 				if (response.data.transient_time) {
-					viewTimeMessage(response.data.transient_time);
+					navbarMessage(response.data.transient_time);
 				} else {
 					toastMessage(response.data, __(responseMessage, 'amapi'));
 				}
@@ -64,24 +67,6 @@ export function loadApiDataFromDatabase() {
 		.catch(error => {
 			console.error(error);
 		});
-}
-
-export function toastMessage(type, message) {
-	let toast_element = document.querySelector('.toast_message');
-
-	toast_element.style.display = 'block';
-	let isNoticeBtn = toast_element.querySelector('.notice-dismiss');
-	let toast_html = `<div class="notice notice-${type ?? 'warning'} notice-alt is-dismissible" style="transition:all 300ms;"><p>${__(message, 'amapi')}</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">${__('Dismiss this notice.', 'amapi')}</span></button></div>`;
-	toast_element.innerHTML = message ? toast_html : '';
-
-	isNoticeBtn && isNoticeBtn.addEventListener('click', function () {
-		toast_element.innerHTML = '';
-	});
-
-	setTimeout(() => {
-		toast_element.innerHTML = '';
-		toast_element.style.display = 'none';
-	}, 3000);
 }
 
 export function ajaxRequest(action, { type = 'GET', ...rest } = {}) {
@@ -115,9 +100,29 @@ export function ajaxRequest(action, { type = 'GET', ...rest } = {}) {
 	}
 };
 
-// This function is used to display a the remaining time related message
-export function viewTimeMessage(transientTime) {
 
+
+export function toastMessage(type, message) {
+	let toast_element = document.querySelector('.toast_message');
+
+	toast_element.style.display = 'block';
+	let isNoticeBtn = toast_element.querySelector('.notice-dismiss');
+	let toast_html = `<div class="notice notice-${type ?? 'warning'} notice-alt is-dismissible" style="transition:all 300ms;"><p>${__(message, 'amapi')}</p><button type="button" class="notice-dismiss"><span class="screen-reader-text">${__('Dismiss this notice.', 'amapi')}</span></button></div>`;
+	toast_element.innerHTML = message ? toast_html : '';
+
+	isNoticeBtn && isNoticeBtn.addEventListener('click', function () {
+		toast_element.innerHTML = '';
+	});
+
+	setTimeout(() => {
+		toast_element.innerHTML = '';
+		toast_element.style.display = 'none';
+	}, 3000);
+}
+
+
+// This function is used to display a the remaining time related message
+export function navbarMessage(transientTime) {
 	var viewTime = document.getElementById("viewTime");
 	const fallbackMessage = __('Click Refresh to get updated data from the <a href="https://miusage.com/v1/challenge/1/" target="_blank">miusage.com</a> server', 'amapi');
 	if (viewTime) {

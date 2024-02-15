@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
 define( 'AMAPI_PLUGIN_FILE', plugin_dir_path( __FILE__ ) );
 define( 'AMAPI_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
 define( 'AMAPI_VERSION', '1.0.0' );

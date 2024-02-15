@@ -5,10 +5,10 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		...defaultConfig.entry(),
-		'amapi_script': [
-			'./src/js/ajax_request.js',
+		'amapi-scripts': [
+			'./src/js/amapi-scripts.js',
 			'./src/js/lib.js',
 		],
-		'amapi_style': ['./src/scss/plugin.scss'],
+		'amapi-styles': ['./src/scss/plugin.scss'],
 	},
 };

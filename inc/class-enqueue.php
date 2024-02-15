@@ -27,7 +27,7 @@ class Enqueue {
 	 */
 	public function load_plugin_block_scripts() {
 		wp_enqueue_script( 'amapi_block_script', AMAPI_PLUGIN_URI . 'build/amapi_block.js', array(), AMAPI_VERSION );
-		wp_enqueue_style( 'amapi_style', AMAPI_PLUGIN_URI . 'build/amapi_style.css', null, AMAPI_VERSION );
+		wp_enqueue_style( 'amapi-styles', AMAPI_PLUGIN_URI . 'build/amapi-styles.css', null, AMAPI_VERSION );
 	}
 
 	/**
@@ -37,11 +37,11 @@ class Enqueue {
 	 */
 	public function load_plugin_scripts() {
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'amapi-table-page' ) {
-			wp_enqueue_script( 'amapi_script', AMAPI_PLUGIN_URI . 'build/amapi_script.js', array('wp-i18n'), AMAPI_VERSION, true );
-			wp_localize_script( 'amapi_script', 'amapidata', array(
+			wp_enqueue_script( 'amapi-scripts', AMAPI_PLUGIN_URI . 'build/amapi-scripts.js', array('wp-i18n'), AMAPI_VERSION, true );
+			wp_localize_script( 'amapi-scripts', 'amapidata', array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 			) );
-			wp_enqueue_style( 'amapi_smtp_style', AMAPI_PLUGIN_URI . 'build/amapi_style.css', null, AMAPI_VERSION );
+			wp_enqueue_style( 'amapi-styles', AMAPI_PLUGIN_URI . 'build/amapi-styles.css', null, AMAPI_VERSION );
 		}
 	}
 

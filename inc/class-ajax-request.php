@@ -31,7 +31,7 @@ class Class_Ajax_Request {
 	public function load_amapi_data( $cli = false ) {
 
 		if ( $cli == "" && get_transient( 'amapi_data_loaded' ) == true ) {
-			wp_send_json_success( 'Please wait until the countdown is finished' );
+			wp_send_json_error( 'Please wait until the countdown is finished' );
 			exit;
 		}
 
@@ -65,6 +65,18 @@ class Class_Ajax_Request {
 		// https://developer.wordpress.org/reference/classes/wpdb/prepare/#changelog
 		if ( $isTableClose !== false && $isTableClose >= 0 ) {
 			foreach ( $rows as $data ) {
+				$existing_data = $wpdb->get_row(
+					$wpdb->prepare(
+						"SELECT * FROM $table_name WHERE id = %d",
+						intval( $data->id )
+					)
+				);
+
+				if ( $existing_data ) {
+					// If the ID already exists, you can handle it as per your requirements
+					continue; // Skip this iteration and move to the next one
+				}
+
 				$data_to_insert = array(
 					'id'         => intval( $data->id ),
 					'first_name' => sanitize_text_field( $data->fname ),
@@ -79,6 +91,7 @@ class Class_Ajax_Request {
 					wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
 				}
 			}
+
 
 			set_transient( 'amapi_data_loaded', true, 1 * 20 );
 

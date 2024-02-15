@@ -120,11 +120,11 @@ export default function Edit({ attributes, setAttributes }) {
 				<table >
 					<thead>
 						<tr>
-							{showIdColumn && <th>__('ID', 'amapi')</th>}
-							{showFirstNameColumn && <th>__('First Name', 'amapi')</th>}
-							{showLastNameColumn && <th>__('Last Name', 'amapi')</th>}
-							{showEmailColumn && <th>__('Email', 'amapi')</th>}
-							{showDateColumn && <th>__('Date', 'amapi')</th>}
+							{showIdColumn && <th>{__('ID', 'amapi')}</th>}
+							{showFirstNameColumn && <th>{__('First Name', 'amapi')}</th>}
+							{showLastNameColumn && <th>{__('Last Name', 'amapi')}</th>}
+							{showEmailColumn && <th>{__('Email', 'amapi')}</th>}
+							{showDateColumn && <th>{__('Date', 'amapi')}</th>}
 						</tr>
 					</thead>
 					<tbody>{renderTableRows()}</tbody>
