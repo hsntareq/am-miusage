@@ -3,6 +3,7 @@
  */
 
 import { __ } from '@wordpress/i18n';
+var viewTime = document.getElementById("viewTime");
 
 export function viewLoading(show = true) {
 	let loader = document.querySelector('.loader');
@@ -13,12 +14,16 @@ export function formattedDate(date) {
 	return new Date(date * 1000).toISOString().replace("T", " ").replace(/\.\d+Z$/, '')
 };
 
-export function loadApiDataFromDatabase(clicked = false) {
-
+export function loadApiDataFromDatabase(clicked = true) {
+	console.log('This function is following this action: ', clicked);
+	if (!clicked) {
+		toastMessage('warning', 'Wait');
+		return;
+	}
 	let table = document.querySelector('.wp-list-table');
+	let isTableEmpty = table.querySelector('tbody tr.no-items') === null ? true : false;
 
 	viewLoading(true);
-	let isTableEmpty = table.querySelector('tbody tr.no-items') === null ? true : false;
 
 	ajaxRequest('load_amapi_data', { type: 'POST' })
 		.then(response => {
@@ -26,7 +31,7 @@ export function loadApiDataFromDatabase(clicked = false) {
 			if (response.success === true) {
 
 				let get_tbody_html = (rowData = {}) => {
-					// console.log(typeof rowData, Array.isArray(rowData));
+
 					if (typeof rowData !== 'object') {
 						console.error('rowData must be an object');
 						return;
@@ -66,7 +71,7 @@ export function loadApiDataFromDatabase(clicked = false) {
 		});
 }
 
-export function ajaxRequest(action, { type = 'GET', ...rest } = {}) {
+export async function ajaxRequest(action, { type = 'GET', ...rest } = {}) {
 	const formData = new FormData();
 	formData.append('action', action);
 
@@ -119,24 +124,31 @@ export function toastMessage(type, message) {
 
 
 // This function is used to display a the remaining time related message
+export function remainingFormatedTime(transientTime) {
+	let updatedRemainingTime = parseInt(transientTime, 10) - Math.floor(Date.now() / 1000);
+	let hours = Math.floor(updatedRemainingTime / 3600);
+	let minutes = Math.floor((updatedRemainingTime % 3600) / 60);
+	let seconds = updatedRemainingTime % 60;
+	return padZero(hours) + ":" + padZero(minutes) + ":" + padZero(seconds);
+}
+// This function is used to display a the remaining time related message
 export function navbarMessage(transientTime) {
-	var viewTime = document.getElementById("viewTime");
+	console.log(transientTime);
 	const fallbackMessage = __('Click Refresh to get updated data from the <a href="https://miusage.com/v1/challenge/1/" target="_blank">miusage.com</a> server', 'amapi');
 	if (viewTime) {
 		var remainingTime = parseInt(transientTime, 10) - (Math.floor(Date.now() / 1000));
 		if (!remainingTime) return;
 		if (remainingTime > 0) {
 			function updateTime() {
-				var updatedRemainingTime = parseInt(transientTime, 10) - Math.floor(Date.now() / 1000);
-				if (updatedRemainingTime > 0) {
-					var hours = Math.floor(updatedRemainingTime / 3600);
-					var minutes = Math.floor((updatedRemainingTime % 3600) / 60);
-					var seconds = updatedRemainingTime % 60;
-					var formattedTime = padZero(hours) + ":" + padZero(minutes) + ":" + padZero(seconds);
 
-					viewTime.innerHTML = __('Data will be refreshed in', 'amapi') + ' ' + formattedTime;
+				let updatedRemainingTime = parseInt(transientTime, 10) - Math.floor(Date.now() / 1000);
+				if (updatedRemainingTime > 0) {
+					viewTime.dataset.amapi = 'false';
+					viewTime.transientTime = transientTime;
+					viewTime.innerHTML = __('Data will be refreshed in', 'amapi') + ' ' + remainingFormatedTime(transientTime);
 				} else {
 					clearInterval(intervalId);
+					viewTime.dataset.transientTime = 0;
 					viewTime.innerHTML = fallbackMessage;
 				}
 			}
@@ -147,7 +159,8 @@ export function navbarMessage(transientTime) {
 		}
 	}
 
-	function padZero(num) {
-		return (num < 10 ? "0" : "") + num;
-	}
+}
+
+export function padZero(num) {
+	return (num < 10 ? "0" : "") + num;
 }

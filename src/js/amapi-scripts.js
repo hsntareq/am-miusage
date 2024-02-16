@@ -6,7 +6,7 @@
  */
 
 import { __ } from '@wordpress/i18n';
-import { navbarMessage, loadApiDataFromDatabase, toastMessage } from "./lib";
+import { navbarMessage, loadApiDataFromDatabase, formattedDate, toastMessage } from "./lib";
 
 document.addEventListener("DOMContentLoaded", function () {
 	let remainingResetTime = document.getElementById("viewTime").dataset.transientTime;
@@ -17,14 +17,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	navbarMessage(remainingResetTime); // View the remaining time to reset the data by clicking the refresh button
 
-	console.log(remainingResetTime);
-	console.log('' !== remainingResetTime && remainingResetTime <= 0);
+	let timeLimit = ('' !== remainingResetTime && remainingResetTime <= 0);
+	console.log(timeLimit, amapiValue, formattedDate(remainingResetTime));
 
-	if ('' !== remainingResetTime && remainingResetTime <= 0 && amapiValue === 'false') {
+	if (timeLimit && amapiValue === 'false') {
 		loadApiDataFromDatabase();
 	}
 
 	refreshButton && refreshButton.addEventListener("click", function () {
-		loadApiDataFromDatabase(true);
+		loadApiDataFromDatabase(timeLimit);
 	});
 });
