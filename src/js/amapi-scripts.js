@@ -10,6 +10,7 @@ import { navbarMessage, loadApiDataFromDatabase, toastMessage } from "./lib";
 
 document.addEventListener("DOMContentLoaded", function () {
 	let remainingResetTime = document.getElementById("viewTime").dataset.transientTime;
+	let amapiValue = document.getElementById("viewTime").dataset.amapi;
 	// remainingResetTime = 0;
 
 	let refreshButton = document.getElementById("refresh_button");
@@ -19,19 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
 	console.log(remainingResetTime);
 	console.log('' !== remainingResetTime && remainingResetTime <= 0);
 
-	if ('' !== remainingResetTime && remainingResetTime <= 0) {
-		console.log('this is working');
+	if ('' !== remainingResetTime && remainingResetTime <= 0 && amapiValue === 'false') {
 		loadApiDataFromDatabase();
 	}
 
 	refreshButton && refreshButton.addEventListener("click", function () {
-
-		console.log(remainingResetTime > 0);
-		if (remainingResetTime > 0) {
-			toastMessage('success', 'You can refresh the data after 5 minutes.');
-			return;
-		}
-
 		loadApiDataFromDatabase(true);
 	});
 });

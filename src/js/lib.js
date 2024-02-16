@@ -14,10 +14,7 @@ export function formattedDate(date) {
 };
 
 export function loadApiDataFromDatabase(clicked = false) {
-	if (clicked) {
-		toastMessage('warning', 'Wait');
-		return;
-	}
+
 	let table = document.querySelector('.wp-list-table');
 
 	viewLoading(true);
@@ -25,11 +22,11 @@ export function loadApiDataFromDatabase(clicked = false) {
 
 	ajaxRequest('load_amapi_data', { type: 'POST' })
 		.then(response => {
-			console.log(response.data);
+
 			if (response.success === true) {
 
 				let get_tbody_html = (rowData = {}) => {
-					console.log(typeof rowData, Array.isArray(rowData));
+					// console.log(typeof rowData, Array.isArray(rowData));
 					if (typeof rowData !== 'object') {
 						console.error('rowData must be an object');
 						return;
