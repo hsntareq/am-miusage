@@ -1,99 +1,116 @@
 <?php
 /**
- * load_amapi_data_table
+ * Load Amapi Data Table
  *
- *
+ * @package Miusage
+ * @since 1.0.0
  */
 
+if ( ! function_exists( 'amapi_generate_dynamic_table' ) ) {
+	function amapi_generate_dynamic_table( $attributes, $table_data ) {
 
-// Function to generate the dynamic table
-function generate_dynamic_table( $attributes, $table_data ) {
-
-	$html = '<table>';
-	$html .= '<thead>';
-	$html .= '<tr>';
-	if ( $attributes['showIdColumn'] ) {
-		$html .= '<th>ID</th>';
-	}
-	if ( $attributes['showFirstNameColumn'] ) {
-		$html .= '<th>First Name</th>';
-	}
-	if ( $attributes['showLastNameColumn'] ) {
-		$html .= '<th>Last Name</th>';
-	}
-	if ( $attributes['showEmailColumn'] ) {
-		$html .= '<th>Email</th>';
-	}
-	if ( $attributes['showDateColumn'] ) {
-		$html .= '<th>Date</th>';
-	}
-	$html .= '</tr>';
-	$html .= '</thead>';
-	$html .= '<tbody>';
-	foreach ( $table_data as $row ) {
+		$html = '<table>';
+		$html .= '<thead>';
 		$html .= '<tr>';
 		if ( $attributes['showIdColumn'] ) {
-			$html .= '<td>' . $row->id . '</td>';
+			$html .= '<th>' . __( 'ID', 'amapi' ) . '</th>';
 		}
 		if ( $attributes['showFirstNameColumn'] ) {
-			$html .= '<td>' . $row->first_name . '</td>';
+			$html .= '<th>' . __( 'First Name', 'amapi' ) . '</th>';
 		}
 		if ( $attributes['showLastNameColumn'] ) {
-			$html .= '<td>' . $row->last_name . '</td>';
+			$html .= '<th>' . __( 'Last Name', 'amapi' ) . '</th>';
 		}
 		if ( $attributes['showEmailColumn'] ) {
-			$html .= '<td>' . $row->email . '</td>';
+			$html .= '<th>' . __( 'Email', 'amapi' ) . '</th>';
 		}
 		if ( $attributes['showDateColumn'] ) {
-			$html .= '<td>' . $row->date . '</td>';
+			$html .= '<th>' . __( 'Date', 'amapi' ) . '</th>';
 		}
 		$html .= '</tr>';
+		$html .= '</thead>';
+		$html .= '<tbody>';
+		foreach ( $table_data as $row ) {
+			$html .= '<tr>';
+			if ( $attributes['showIdColumn'] ) {
+				$html .= '<td>' . $row->id . '</td>';
+			}
+			if ( $attributes['showFirstNameColumn'] ) {
+				$html .= '<td>' . $row->first_name . '</td>';
+			}
+			if ( $attributes['showLastNameColumn'] ) {
+				$html .= '<td>' . $row->last_name . '</td>';
+			}
+			if ( $attributes['showEmailColumn'] ) {
+				$html .= '<td>' . $row->email . '</td>';
+			}
+			if ( $attributes['showDateColumn'] ) {
+				$html .= '<td>' . $row->date . '</td>';
+			}
+			$html .= '</tr>';
+		}
+		$html .= '</tbody>';
+		$html .= '</table>';
+		return $html;
 	}
-	$html .= '</tbody>';
-	$html .= '</table>';
-	return $html;
 }
 
-// Your render callback function
-function amapi_data_block_render( $attributes, $content ) {
-	// Generate the HTML for your block
-	$html = '<div class="am-apidata-table">';
-	$html .= generate_dynamic_table( $attributes, amapi_get_all_data() );
-	$html .= '</div>';
-
-	return $html;
+if ( ! function_exists( 'amapi_data_block_render' ) ) {
+	/**
+	 * Amapi Data Block Render
+	 *
+	 * @param mixed $attributes
+	 * @param mixed $content
+	 *
+	 * @return void
+	 */
+	function amapi_data_block_render( $attributes, $content ) {
+		ob_start();
+		$html = '<div class="am-apidata-table">';
+		$html .= amapi_generate_dynamic_table( $attributes, amapi_get_all_data() );
+		$html .= '</div>';
+		echo $html;
+		echo ob_get_clean();
+	}
 }
 
-function amapi_get_all_data( $args = [] ) {
-	global $wpdb;
+if ( ! function_exists( 'amapi_get_all_data' ) ) {
+	/**
+	 * Amapi get all data
+	 *
+	 * @param mixed $args
+	 *
+	 * @return void
+	 */
+	function amapi_get_all_data( $args = [] ) {
+		global $wpdb;
 
-	$args = wp_parse_args( $args, [
-		'number'  => 20,
-		'offset'  => 0,
-		'orderby' => 'id',
-		'order'   => 'ASC',
-	] );
+		$args = wp_parse_args( $args, [
+			'number'  => 20,
+			'offset'  => 0,
+			'orderby' => 'id',
+			'order'   => 'ASC',
+		] );
 
-	$table_name = $wpdb->prefix . 'am_miusage_api';
-	$order      = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
-	$order      = sanitize_sql_orderby( "{$order}" );
+		$table_name = $wpdb->prefix . 'am_miusage_api';
+		$order      = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
+		$order      = sanitize_sql_orderby( "{$order}" );
 
 
-	$items = $wpdb->get_results(
-		$wpdb->prepare(
-			// https://developer.wordpress.org/reference/classes/wpdb/prepare/#description
-			"SELECT * FROM %i ORDER BY %i {$order} LIMIT %d, %d",
-			$table_name, $args['orderby'], $args['offset'], $args['number']
-		)
-	);
-
-	return $items;
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM %i ORDER BY %i {$order} LIMIT %d, %d",
+				$table_name, $args['orderby'], $args['offset'], $args['number']
+			)
+		);
+		// https://developer.wordpress.org/reference/classes/wpdb/prepare/#changelog
+	}
 }
 
 
 if ( ! function_exists( 'load_amapi_data_table' ) ) {
 	/**
-	 * load_amapi_data_table
+	 * Load amapi data table
 	 *
 	 * @return void
 	 */
@@ -104,60 +121,14 @@ if ( ! function_exists( 'load_amapi_data_table' ) ) {
 	}
 }
 
-if ( ! function_exists( 'amapi_cron_job' ) ) {
-	/**
-	 * amapi_cron_job
-	 *
-	 * @return void
-	 */
-	function amapi_cron_job() {
-		( new Miusase\Class_Ajax_Request() )->load_amapi_data();
-	}
-	add_action( 'amapi_cron_hook', 'amapi_cron_job' );
-}
-
 if ( ! function_exists( 'plugin_activation' ) ) {
 	/**
-	 * plugin_activation
+	 * Plugin activation
 	 *
 	 * @return void
 	 */
 	function plugin_activation() {
-		if ( ! wp_next_scheduled( 'amapi_cron_hook' ) ) {
-			wp_schedule_event( time(), 'ampi_five_minutes', 'amapi_cron_hook' );
-		}
+		( new \Miusase\Class_Ajax_Request() )->load_amapi_data();
 	}
-	add_action( 'init', 'plugin_activation' );
-}
-
-if ( ! function_exists( 'amapi_custom_cron_schedule' ) ) {
-	/**
-	 * amapi_custom_cron_schedule
-	 *
-	 * @param mixed $schedules
-	 *
-	 * @return array
-	 */
-	function amapi_custom_cron_schedule( $schedules ) {
-		if ( ! isset( $schedules['ampi_minute'] ) ) {
-			$schedules['ampi_minute'] = array(
-				'interval' => 60,
-				'display'  => __( 'Every Minute' )
-			);
-		}
-		if ( ! isset( $schedules['ampi_hour'] ) ) {
-			$schedules['ampi_hour'] = array(
-				'interval' => 3600,
-				'display'  => __( 'Every Hour' )
-			);
-		}
-		if ( ! isset( $schedules['ampi_five_minutes'] ) ) {
-			$schedules['ampi_five_minutes'] = array(
-				'interval' => 300,
-				'display'  => __( 'Every 5 Minutes' )
-			);
-		}
-		return $schedules;
-	}
-	add_filter( 'cron_schedules', 'amapi_custom_cron_schedule' );
+	register_activation_hook( __FILE__, 'plugin_activation' );
 }

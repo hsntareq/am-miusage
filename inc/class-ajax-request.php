@@ -1,51 +1,46 @@
 <?php
+namespace Miusase;
+
 /**
- * Ajax Request
+ * Ajax Request handller.
  *
  * @package Miusage
  * @since   1.0.0
  */
 
-namespace Miusase;
-
-// if ( ! class_exists( 'WP_CLI_Command' ) ) {
-// 	// Include the necessary WP-CLI files
-// 	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli.php';
-// 	require_once AMAPI_PLUGIN_FILE . '/vendor/wp-cli/wp-cli/php/class-wp-cli-command.php';
-// }
-
-use Miusase\Force_Refresh_Data;
-
+/**
+ * This class is responsible for execute ajax requests.
+ */
 class Class_Ajax_Request {
+	/**
+	 * __construct
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		add_action( 'wp_ajax_load_amapi_data', [ $this, 'load_amapi_data' ] );
 		add_action( 'wp_ajax_nopriv_load_amapi_data', [ $this, 'load_amapi_data' ] );
-		add_action( 'wp_ajax_load_amapi_wpcli_data', [ $this, 'load_amapi_wpcli_data' ] );
-		add_action( 'wp_ajax_nopriv_load_amapi_wpcli_data', [ $this, 'load_amapi_wpcli_data' ] );
 	}
+	/**
+	 * Load Amapi Data
+	 *
+	 * @param bool $cli
+	 *
+	 * @return [type]
+	 */
+	public function load_amapi_data( $cli = false ) {
 
-	public function load_amapi_wpcli_data() {
-		wp_send_json_success( 'WP CLI Command Executed!' );
-		// ( new Force_Refresh_Data() )->execute( [], [] );
-	}
-
-
-	public function amapi_reschedule_cron() {
-		if ( wp_next_scheduled( 'amapi_cron_hook' ) ) {
-			wp_clear_scheduled_hook( 'amapi_cron_hook' );
+		if ( $cli == "" && get_transient( 'amapi_data_loaded' ) == true ) {
+			wp_send_json_error( 'Please wait until the countdown is finished' );
+			exit;
 		}
-		wp_schedule_event( time(), 'ampi_five_minutes', 'amapi_cron_hook' );
-	}
 
-	public function load_amapi_data() {
-		$request_args = array(
+		$apiEndpoint = "https://miusage.com/v1/challenge/1/";
+		$response    = wp_remote_get( esc_url( $apiEndpoint ), array(
 			'headers' => array(
 				'Content-Type' => 'application/json',
 			),
-		);
-
-		$apiEndpoint = "https://miusage.com/v1/challenge/1/";
-		$response    = wp_remote_get( esc_url( $apiEndpoint ), $request_args );
+		) );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( "Error retrieving data from the API: " . esc_html( $response->get_error_message() ) );
@@ -60,31 +55,61 @@ class Class_Ajax_Request {
 		$rows = $response_body->data->rows;
 
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'am_miusage_api';
-		$wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
-		// https://developer.wordpress.org/reference/classes/wpdb/prepare/#description
+		$table_name   = $wpdb->prefix . 'am_miusage_api';
+		$isTableClose = $wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
+		$isTableData  = $wpdb->query( $wpdb->prepare( "SELECT * FROM %i", $table_name ) );
 
-		foreach ( $rows as $data ) {
-			$data_to_insert = array(
-				'id'         => intval( $data->id ),
-				'first_name' => sanitize_text_field( $data->fname ),
-				'last_name'  => sanitize_text_field( $data->lname ),
-				'email'      => sanitize_email( $data->email ),
-				'date'       => gmdate( 'Y-m-d H:i:s', intval( $data->date ) ),
-			);
+		// echo 'data working';
+		// wp_send_json( $isTableData );
 
-			$result = $wpdb->insert( $table_name, $data_to_insert );
+		// https://developer.wordpress.org/reference/classes/wpdb/prepare/#changelog
+		if ( $isTableClose !== false && $isTableClose >= 0 ) {
+			foreach ( $rows as $data ) {
+				$existing_data = $wpdb->get_row(
+					$wpdb->prepare(
+						"SELECT * FROM $table_name WHERE id = %d",
+						intval( $data->id )
+					)
+				);
 
-			if ( $result === false ) {
-				wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
+				if ( $existing_data ) {
+					// If the ID already exists, you can handle it as per your requirements
+					continue; // Skip this iteration and move to the next one
+				}
+
+				$data_to_insert = array(
+					'id'         => intval( $data->id ),
+					'first_name' => sanitize_text_field( $data->fname ),
+					'last_name'  => sanitize_text_field( $data->lname ),
+					'email'      => sanitize_email( $data->email ),
+					'date'       => gmdate( 'Y-m-d H:i:s', intval( $data->date ) ),
+				);
+
+				$result = $wpdb->insert( $table_name, $data_to_insert );
+
+				if ( $result === false ) {
+					wp_send_json_error( "Error inserting data: " . esc_html( $wpdb->last_error ) );
+				}
+			}
+
+
+			set_transient( 'amapi_data_loaded', true, 1 * 20 );
+
+			// Convert the $rows stdClass to an array
+			$rows = json_decode( json_encode( $rows ), true );
+			usort( $rows, function ($a, $b) {
+				return $a['id'] - $b['id'];
+			} );
+
+			if ( $cli && get_transient( 'amapi_data_loaded' ) ) {
+				return;
+			} else {
+				$response_data = [
+					'response_data'  => $rows,
+					'transient_time' => get_transient( 'timeout_amapi_data_loaded' ),
+				];
+				wp_send_json_success( $response_data );
 			}
 		}
-
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'WP_CLI' ) && WP_CLI ) && wp_next_scheduled( 'amapi_cron_hook' ) ) {
-			$this->amapi_reschedule_cron();
-		}
-
-		wp_send_json_success( $response_body->data );
 	}
-
 }
